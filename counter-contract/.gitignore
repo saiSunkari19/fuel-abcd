@@ -1,0 +1,5 @@
+out
+target
+types
+node_modules
+.env
