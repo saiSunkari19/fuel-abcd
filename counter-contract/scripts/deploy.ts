@@ -43,8 +43,8 @@ async function main() {
     // Contract interaction to sign the tx 
 
     const { transactionId, waitForResult } = await counterContract.functions.increment(1).call()
-    const { value: inc } = await waitForResult();
-    console.log(inc, transactionId)
+    const { value: inc, logs } = await waitForResult();
+    console.log(inc, transactionId, JSON.stringify(logs))
 
 
     // Counter value atter 

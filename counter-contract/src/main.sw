@@ -1,8 +1,16 @@
 contract;
 
 use std::execution::run_external;
+use std::logging::log;
 use standards::src14::{SRC14, SRC14_TARGET_STORAGE, SRC14Extension};
-use standards::src5::{AccessError, State};
+use standards::src5::{AccessError,SRC5, State};
+
+
+pub struct CounterIncreasedEvent {
+    pub amount: u64,
+    pub address: Identity,
+}
+
 
 /// The owner of this contract at deployment.
 #[allow(dead_code)]
@@ -22,6 +30,14 @@ abi Counter {
 
     #[storage(read)]
     fn counter() -> u64;
+}
+
+
+impl SRC5 for Contract {
+    #[storage(read)]
+    fn owner() -> State {
+        storage::SRC14.owner.read()
+    }
 }
 
 impl SRC14 for Contract {
@@ -70,6 +86,12 @@ impl Counter for Contract {
     fn increment(amount: u64) -> u64 {
         let incremented = storage.counter.read() + amount;
         storage.counter.write(incremented);
-        incremented
+
+        log(CounterIncreasedEvent{
+            amount, 
+            address: msg_sender().unwrap()
+        });
+
+       return incremented;
     }
 }
