@@ -1,16 +1,15 @@
 import { BN, Contract, Provider, Wallet, WalletUnlocked } from "fuels";
 import { CounterContractFactory, CounterContract } from "../types"
-import abi from "./../out/debug/counter-contract-abi.json"
+import abi from "./../out/release/counter-contract-abi.json"
 import dotenv from "dotenv";
 import { waitForDebugger } from "node:inspector";
 dotenv.config();
 
-const contractAddress = "0x77d0af797046c6fa422581dc13d4536193392f54d4ade59b2de1f27c093daef7"
+const contractAddress = "0x35d1c8fbc9c2ca331f5ac9d469ba728d8480d3db13f893dcc8bc97cc6a91dee4"
 const address = "0x5CCDB6FA3192B0664cD53C42102720bbC711f8718cA18c995507ee2Ff32b8956"
 
 
-
-async function deploy() {
+async function main() {
 
     // (address, provider).
     const provider = await Provider.create(process.env.LOCAL_NETWORK_URL!)
@@ -38,12 +37,12 @@ async function deploy() {
     console.log(valueBefore)
 
     // Contract interaction to simulate the tx 
-    const { callResult } = await counterContract.functions.increment().simulate()
+    const { callResult } = await counterContract.functions.increment(10).simulate()
     console.log(callResult.dryRunStatus)
 
     // Contract interaction to sign the tx 
 
-    const { transactionId, waitForResult } = await counterContract.functions.increment().call()
+    const { transactionId, waitForResult } = await counterContract.functions.increment(1).call()
     const { value: inc } = await waitForResult();
     console.log(inc, transactionId)
 
@@ -57,7 +56,7 @@ async function deploy() {
 
 
 
-async function main() {
+async function deploy() {
     const provider = await Provider.create(process.env.LOCAL_NETWORK_URL!)
     const wallet = WalletUnlocked.fromMnemonic(process.env.MNEMONIC!)
     wallet.connect(provider)
